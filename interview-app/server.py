@@ -3,7 +3,6 @@ from werkzeug.utils import secure_filename
 from PyPDF2 import PdfReader
 import io, os
 import openai
-
 from dotenv import load_dotenv
 
 load_dotenv()
