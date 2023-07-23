@@ -3,7 +3,7 @@ from werkzeug.utils import secure_filename
 from PyPDF2 import PdfReader
 import io, os
 import openai
-openai.api_key = "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"
+openai.api_key = "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"
 
 
 app = Flask(__name__,static_folder='build')
