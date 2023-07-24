@@ -2,9 +2,9 @@ import React, { useState } from "react";
 
 function ResumeBox() {
     const [file, setFile] = useState(null);
-    const [userText, setUserText] = useState(""); // Holds user text
+    const [userText, setUserText] = useState(''); // Holds user input text
     const [responseData, setResponseData] = useState(null); // Holds server response
-    const [isLoading, setIsLoading] = useState(false); // New state to track loading status
+    const [isLoading, setIsLoading] = useState(false); // Tracks loading status
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
@@ -44,18 +44,18 @@ function ResumeBox() {
             <div className="flex justify-center items-center" style={{backgroundColor: "#EFEEEE", height: '75px'}}>Interview Simulator</div>
             <input 
                 type="file"
-                name="file"
+                name="name"
                 placeholder="Input Resume"
                 className="p-2 bg-transparent border-2 rounded-md focus:outline-none"
                 onChange={handleFileChange}
             />
-            <input
-                type="text"
-                name="text"
-                placeholder="Input optional text"
+
+            <textarea  // Use textarea for multiline text input
+                placeholder="Optional Job Description"
                 className="p-2 bg-transparent border-2 rounded-md focus:outline-none"
                 onChange={handleTextChange}
             />
+
             <button onClick={handleSubmit}>Submit</button>
 
             {/* Conditionally rendering loading text or server response */}
@@ -76,3 +76,5 @@ function ResumeBox() {
 }
 
 export default ResumeBox;
+
+
