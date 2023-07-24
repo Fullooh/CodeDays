@@ -35,7 +35,7 @@ function ResumeBox() {
 
     return (
         <div className="flex flex-col mb-10 mx-auto">
-            <div className="flex justify-center items-center">Upload Your Resume</div>
+            <div className="flex justify-center items-center" style={{backgroundColor: "#EFEEEE", height: '75px'}}>Interview Stimulator</div>
             <input 
                 type="file"
                 name="name"
