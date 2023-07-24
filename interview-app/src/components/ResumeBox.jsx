@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 function ResumeBox() {
     const [file, setFile] = useState(null);
+    const [userText, setUserText] = useState(""); // Holds user text
     const [responseData, setResponseData] = useState(null); // Holds server response
     const [isLoading, setIsLoading] = useState(false); // New state to track loading status
 
@@ -9,10 +10,15 @@ function ResumeBox() {
         setFile(e.target.files[0]);
     }
 
+    const handleTextChange = (e) => {
+        setUserText(e.target.value);
+    }
+
     const handleSubmit = async () => {
         setIsLoading(true); // Set loading to true when request starts
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('text', userText); // Add user text to formData
 
         try {
             const response = await fetch('/upload', {
@@ -35,13 +41,20 @@ function ResumeBox() {
 
     return (
         <div className="flex flex-col mb-10 mx-auto">
-            <div className="flex justify-center items-center">Upload Your Resume</div>
+            <div className="flex justify-center items-center" style={{backgroundColor: "#EFEEEE", height: '75px'}}>Interview Simulator</div>
             <input 
                 type="file"
-                name="name"
+                name="file"
                 placeholder="Input Resume"
                 className="p-2 bg-transparent border-2 rounded-md focus:outline-none"
                 onChange={handleFileChange}
+            />
+            <input
+                type="text"
+                name="text"
+                placeholder="Input optional text"
+                className="p-2 bg-transparent border-2 rounded-md focus:outline-none"
+                onChange={handleTextChange}
             />
             <button onClick={handleSubmit}>Submit</button>
 
