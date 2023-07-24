@@ -3,14 +3,14 @@ from werkzeug.utils import secure_filename
 from PyPDF2 import PdfReader
 import io, os
 import openai
-openai.api_key = "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"
+openai.api_key = ""
 
 
 app = Flask(__name__,static_folder='build')
 
-def get_questions(resume):
+def get_questions(resume,text):
     systempromt = 'You are an interviewer at the HR department at a company.'
-    userpromt= 'Here is the resume of the interviewee that you are supposed to interview./n' +resume+ "Please come up with 10 interview questions that are as relevant as possible based on the resume you received."
+    userpromt= 'Below is the job description of the job that you are interviewing for:/n'+text+'Here is the resume of the interviewee that you are supposed to interview./n' +resume+ "Please come up with 10 interview questions that are as relevant as possible based on the resume you received and the job description."
     message=[
         {
             "role": "system",
@@ -25,8 +25,8 @@ def get_questions(resume):
     response = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
     messages=message,
-    temperature=0.6,
-    max_tokens=1000,
+    temperature=0.8,
+    max_tokens=1300,
     top_p=1,
     frequency_penalty=0,
     presence_penalty=0
@@ -51,6 +51,8 @@ def upload_file():
         return 'No file part', 400
 
     file = request.files['file']
+    text = request.form.get('text') 
+
     if file.filename == '':
         return 'No selected file', 400
 
@@ -61,7 +63,7 @@ def upload_file():
         for page_num in range(len(reader.pages)):
             resume += reader.pages[page_num].extract_text()
 
-        response_content=get_questions(resume)
+        response_content=get_questions(resume,text)
 
         return jsonify({'content': response_content}), 200
 
@@ -77,4 +79,5 @@ def serve(path):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
