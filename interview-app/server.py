@@ -29,8 +29,8 @@ def get_questions(resume,text):
     response = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
     messages=message,
-    temperature=0.8,
-    max_tokens=1300,
+    temperature=0.6,
+    max_tokens=1000,
     top_p=1,
     frequency_penalty=0,
     presence_penalty=0
@@ -55,8 +55,6 @@ def upload_file():
         return 'No file part', 400
 
     file = request.files['file']
-    text = request.form.get('text') 
-
     if file.filename == '':
         return 'No selected file', 400
 
@@ -67,7 +65,7 @@ def upload_file():
         for page_num in range(len(reader.pages)):
             resume += reader.pages[page_num].extract_text()
 
-        response_content=get_questions(resume,text)
+        response_content=get_questions(resume)
 
         return jsonify({'content': response_content}), 200
 
@@ -83,5 +81,4 @@ def serve(path):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
 
