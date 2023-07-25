@@ -43,21 +43,26 @@ function ResumeBox() {
                 className="p-2 bg-transparent border-2 rounded-md focus:outline-none"
                 onChange={handleFileChange}
             />
-            <button onClick={handleSubmit}>Submit</button>
+            <button onClick={handleSubmit} 
+            className="inline-block px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300 mx-auto"
+            >Submit</button>
 
             {/* Conditionally rendering loading text or server response */}
             {isLoading ? (
                 <div className="mt-5">
                     <p>Loading...</p>
                 </div>
-            ) : (
-                responseData && (
-                    <div className="mt-5">
-                        <h3 className="text-xl">Interview Questions:</h3>
-                        <p>{responseData}</p>
+            ) : responseData ? (
+                <div className="mt-5">
+                  <h3 className="text-xl">Interview Questions:</h3>
+                  {responseData.split('\n').map((response, index) => (
+                    <div key={index} className="border p-4 rounded-lg shadow-md mb-4">
+                      <p className="text-lg font-bold">Question {index + 1}</p>
+                      <p>{response}</p>
                     </div>
-                )
-            )}
+                  ))}
+                </div>
+              ) : null}
         </div>
     )
 }
