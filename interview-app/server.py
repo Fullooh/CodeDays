@@ -3,8 +3,12 @@ from werkzeug.utils import secure_filename
 from PyPDF2 import PdfReader
 import io, os
 import openai
-openai.api_key = ""
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__,static_folder='build')
 
