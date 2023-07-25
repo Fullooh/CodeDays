@@ -3,6 +3,7 @@ from werkzeug.utils import secure_filename
 from PyPDF2 import PdfReader
 import io, os
 import openai
+<<<<<<< HEAD
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -10,6 +11,9 @@ load_dotenv()
 
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+=======
+openai.api_key = "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"
+>>>>>>> origin/aesha
 
 
 app = Flask(__name__,static_folder='build')
