@@ -35,11 +35,7 @@ function ResumeBox() {
 
     return (
         <div className="flex flex-col mb-10 mx-auto">
-<<<<<<< HEAD
-            <div className="flex justify-center items-center">Upload Your Resume</div>
-=======
-            <div className="flex justify-center items-center" style={{backgroundColor: "#EFEEEE", height: '75px'}}>Interview Stimulator</div>
->>>>>>> origin/aesha
+            <div className="flex justify-center items-center" style={{backgroundColor: "#EFEEEE", height: '75px'}}>Interview Simulator</div>
             <input 
                 type="file"
                 name="name"
@@ -47,20 +43,15 @@ function ResumeBox() {
                 className="p-2 bg-transparent border-2 rounded-md focus:outline-none"
                 onChange={handleFileChange}
             />
-<<<<<<< HEAD
             <button onClick={handleSubmit} 
             className="inline-block px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300 mx-auto"
-            >Submit</button>
-=======
-            <button onClick={handleSubmit}>Submit</button>
->>>>>>> origin/aesha
+            >Upload Your Resume</button>
 
             {/* Conditionally rendering loading text or server response */}
             {isLoading ? (
                 <div className="mt-5">
                     <p>Loading...</p>
                 </div>
-<<<<<<< HEAD
             ) : responseData ? (
                 <div className="mt-5">
                   <h3 className="text-xl">Interview Questions:</h3>
@@ -72,16 +63,6 @@ function ResumeBox() {
                   ))}
                 </div>
               ) : null}
-=======
-            ) : (
-                responseData && (
-                    <div className="mt-5">
-                        <h3 className="text-xl">Interview Questions:</h3>
-                        <p>{responseData}</p>
-                    </div>
-                )
-            )}
->>>>>>> origin/aesha
         </div>
     )
 }
