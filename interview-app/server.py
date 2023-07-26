@@ -53,26 +53,33 @@ def after_request(response):
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
-        return 'No file part', 400
+        return jsonify({'error': 'No file part'}), 400
 
     file = request.files['file']
-    text = request.form.get('text') 
+    text = request.form.get('text')
 
     if file.filename == '':
-        return 'No selected file', 400
+        return jsonify({'error': 'No selected file'}), 400
+
+    if not file.filename.lower().endswith('.pdf'):
+        return jsonify({'error': 'Please upload a PDF file'}), 400
 
     if file and secure_filename(file.filename):
-        file_stream = io.BytesIO(file.read())
-        reader = PdfReader(file_stream)
-        resume = ''
-        for page_num in range(len(reader.pages)):
-            resume += reader.pages[page_num].extract_text()
+        try:
+            file_stream = io.BytesIO(file.read())
+            reader = PdfReader(file_stream)
+            resume = ''
+            for page_num in range(len(reader.pages)):
+                resume += reader.pages[page_num].extract_text()
+        except PdfReadError:
+            return jsonify({'error': 'Unable to read PDF file. Please ensure it is a valid PDF document.'}), 400
 
-        response_content=get_questions(resume,text)
+        response_content = get_questions(resume, text)
 
         return jsonify({'content': response_content}), 200
 
-    return 'Unexpected error', 500
+    return jsonify({'error': 'Unexpected error'}), 500
+
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
