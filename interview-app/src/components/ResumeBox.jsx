@@ -65,18 +65,19 @@ function ResumeBox() {
                 <div className="mt-5">
                     <p>Loading...</p>
                 </div>
-            ) : (
-                responseData && (
-                    <div className="mt-5">
-                        <h3 className="text-xl">Interview Questions:</h3>
-                        <p>{responseData}</p>
+            ) : responseData ? (
+                <div className="mt-5">
+                  <h3 className="text-xl">Interview Questions:</h3>
+                  {responseData.split('\n').map((response, index) => (
+                    <div key={index} className="border p-4 rounded-lg shadow-md mb-4">
+                      <p className="text-lg font-bold">Question {index + 1}</p>
+                      <p>{response}</p>
                     </div>
-                )
-            )}
+                  ))}
+                </div>
+              ) : null}
         </div>
     )
 }
 
 export default ResumeBox;
-
-
