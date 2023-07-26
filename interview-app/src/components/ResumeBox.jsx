@@ -9,11 +9,9 @@ function ResumeBox() {
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
     }
-
     const handleTextChange = (e) => {
         setUserText(e.target.value);
     }
-
 
     const handleSubmit = async () => {
         setIsLoading(true); // Set loading to true when request starts
@@ -57,7 +55,7 @@ function ResumeBox() {
                 className="p-2 bg-transparent border-2 rounded-md focus:outline-none"
                 onChange={handleTextChange}
             />
-
+            
             <button onClick={handleSubmit}>Submit</button>
 
             {/* Conditionally rendering loading text or server response */}
