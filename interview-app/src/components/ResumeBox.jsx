@@ -2,24 +2,27 @@ import React, { useState } from "react";
 
 function ResumeBox() {
     const [file, setFile] = useState(null);
-    const [userText, setUserText] = useState(''); // Holds user input text
+    const [text, setText] = useState(''); // Holds the user's optional text input
     const [responseData, setResponseData] = useState(null); // Holds server response
-    const [isLoading, setIsLoading] = useState(false); // Tracks loading status
+    const [errorMessage, setErrorMessage] = useState(null); // Holds server error
+    const [isLoading, setIsLoading] = useState(false); // New state to track loading status
 
-    
+
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
+        setResponseData(null);
+        setErrorMessage(null);
     }
 
     const handleTextChange = (e) => {
-        setUserText(e.target.value);
+        setText(e.target.value);
     }
 
     const handleSubmit = async () => {
         setIsLoading(true); // Set loading to true when request starts
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('text', userText); // Add user text to formData
+        formData.append('text', text);
 
         try {
             const response = await fetch('/upload', {
@@ -27,10 +30,12 @@ function ResumeBox() {
                 body: formData,
             });
 
+            const data = await response.json();
+
             if (!response.ok) {
+                setErrorMessage(data.error); // Update the error message state
                 throw new Error(`HTTP error! status: ${response.status}`);
             } else {
-                const data = await response.json();
                 setResponseData(data.content); // Set the response data in state
             }
         } catch (error) {
@@ -44,7 +49,6 @@ function ResumeBox() {
     return (
         <div className="flex flex-col mb-10 mx-auto">
             <div className="flex justify-center items-center" style={{backgroundColor: "#EFEEEE", height: '75px'}}>Interview Simulator</div>
-
             <input 
                 type="file"
                 name="name"
@@ -53,7 +57,7 @@ function ResumeBox() {
                 onChange={handleFileChange}
             />
 
-            <textarea  // Use textarea for multiline text input
+            <textarea
                 placeholder="Optional Job Description"
                 className="p-2 bg-transparent border-2 rounded-md focus:outline-none"
                 onChange={handleTextChange}
@@ -63,24 +67,36 @@ function ResumeBox() {
             className="inline-block px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300 mx-auto"
             >Generate Questions!</button>
 
-            {/* Conditionally rendering loading text or server response */}
+            {/* Conditionally rendering loading text, server response or error message */}
             {isLoading ? (
                 <div className="mt-5">
                     <p>Loading...</p>
                 </div>
-            ) : responseData ? (
+            ) : (
                 <div className="mt-5">
-                  <h3 className="text-xl">Interview Questions:</h3>
-                  {responseData.split('\n').map((response, index) => (
-                    <div key={index} className="border p-4 rounded-lg shadow-md mb-4">
-                      <p className="text-lg font-bold">Question {index + 1}</p>
-                      <p>{response}</p>
-                    </div>
-                  ))}
+                    {responseData ? (
+                        <div>
+                            <h3 className="text-xl">Interview Questions:</h3>
+                            {responseData.split('\n').map((response, index) => (
+                                <div key={index} className="border p-4 rounded-lg shadow-md mb-4">
+                                    <p className="text-lg font-bold">Question {index + 1}</p>
+                                    <p>{response}</p>
+                                </div>
+                            ))}
+                        </div>
+                    ) : null}
+
+                    {errorMessage ? (
+                        <div>
+                            <h3 className="text-xl">Error:</h3>
+                            <p>{errorMessage}</p>
+                        </div>
+                    ) : null}
                 </div>
-              ) : null}
+            )}
         </div>
-    )
+    );
 }
 
 export default ResumeBox;
+

@@ -10,6 +10,8 @@ load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
+
+
 app = Flask(__name__,static_folder='build')
 
 def get_questions(resume,text):
@@ -62,6 +64,7 @@ def upload_file():
 
     if not file.filename.lower().endswith('.pdf'):
         return jsonify({'error': 'Please upload a PDF file.'}), 400
+
 
     if file and secure_filename(file.filename):
         try:
