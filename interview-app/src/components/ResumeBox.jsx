@@ -6,10 +6,11 @@ function ResumeBox() {
     const [responseData, setResponseData] = useState(null); // Holds server response
     const [isLoading, setIsLoading] = useState(false); // Tracks loading status
 
-
+    
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
     }
+
     const handleTextChange = (e) => {
         setUserText(e.target.value);
     }
@@ -39,7 +40,6 @@ function ResumeBox() {
         }
     }
 
-    
 
     return (
         <div className="flex flex-col mb-10 mx-auto">
