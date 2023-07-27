@@ -23,9 +23,9 @@
 }
 
 #label-file-upload.drag-active {
-  background-color: #B8CFEC;
+  background-color: #cbd5e1;
+  color: #ffffff;
 }
-
 
 .upload-button {
   cursor: pointer;
