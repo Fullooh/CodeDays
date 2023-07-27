@@ -15,32 +15,75 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 app = Flask(__name__,static_folder='build')
 
 def get_questions(resume,text):
-    systempromt = 'You are an interviewer at the HR department at a company.'
-    userpromt= 'Below is the job description of the job that you are interviewing for:/n'+text+'Here is the resume of the interviewee that you are supposed to interview./n' +resume+ "Please come up with 10 interview questions that are as relevant as possible based on the resume you received and the job description."
-    message=[
-        {
+    if text!='':
+        systempromt = 'You are an interviewer at the HR department at a company.'
+        userpromt= 'Below is the job description of the job that you are interviewing for:/n'+text+'Here is the resume of the interviewee:/n' +resume+ "Come up with 10 relevant interview questions based on the resume you received and the job description. There must be both questions related to the resume. Only return questions and index numbers without any additional information or empty lines."
+        message=[
+            {
+                "role": "system",
+                "content": systempromt
+            },
+            {
+                "role": "user",
+                "content": userpromt
+            }
+                ]
+
+        response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=message,
+        temperature=0.8,
+        max_tokens=1100,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+            )
+        
+        response_content = response.choices[0].message.content
+
+    elif text=='':
+        systempromt = 'You are an interviewer at the HR department at a company.'
+        userpromt= 'Here is the resume of the interviewee that you are supposed to interview./n' +resume+ "Please return 10 interview questions that are as relevant as possible based on the resume you received without any additional words."
+
+        message=[
+            {
             "role": "system",
             "content": systempromt
-        },
-        {
+            },
+            {
             "role": "user",
             "content": userpromt
-        }
-            ]
+            }
+        ]
 
-    response = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
-    messages=message,
-    temperature=0.8,
-    max_tokens=1300,
-    top_p=1,
-    frequency_penalty=0,
-    presence_penalty=0
+        response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=message,
+        temperature=0.8,
+        max_tokens=1100,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
         )
-        
-    response_content = response.choices[0].message.content
 
-    return response_content 
+        response_content = response.choices[0].message.content
+
+
+    response_list = response_content.split("\n")
+    newlist = []
+
+    for i in response_list:
+        if i[0].isnumeric():
+            i=i[i.find(".")+2:]
+        i=i+"\n"
+        newlist.append(i)
+
+    newresponse=''
+    for i in newlist:
+        newresponse=newresponse+i
+    newresponse=newresponse.strip()
+
+    return newresponse
 
 
 
