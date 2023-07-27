@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, make_response, send_from_directory
 from werkzeug.utils import secure_filename
-from PyPDF2 import PdfReader
+from PyPDF2 import PdfReader 
 import io, os
 import openai
 from dotenv import load_dotenv
@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
 
 
 
@@ -62,7 +63,8 @@ def upload_file():
         return jsonify({'error': 'No selected file'}), 400
 
     if not file.filename.lower().endswith('.pdf'):
-        return jsonify({'error': 'Please upload a PDF file'}), 400
+        return jsonify({'error': 'Please upload a PDF file.'}), 400
+
 
     if file and secure_filename(file.filename):
         try:
@@ -91,5 +93,3 @@ def serve(path):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-

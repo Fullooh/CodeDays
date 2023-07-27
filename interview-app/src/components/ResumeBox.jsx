@@ -7,6 +7,7 @@ function ResumeBox() {
     const [errorMessage, setErrorMessage] = useState(null); // Holds server error
     const [isLoading, setIsLoading] = useState(false); // New state to track loading status
 
+
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
         setResponseData(null);
@@ -44,10 +45,10 @@ function ResumeBox() {
         }
     }
 
+
     return (
         <div className="flex flex-col mb-10 mx-auto">
             <div className="flex justify-center items-center" style={{backgroundColor: "#EFEEEE", height: '75px'}}>Interview Simulator</div>
-    
             <input 
                 type="file"
                 name="name"
@@ -62,7 +63,9 @@ function ResumeBox() {
                 onChange={handleTextChange}
             />
             
-            <button onClick={handleSubmit}>Submit</button>
+            <button onClick={handleSubmit} 
+            className="inline-block px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300 mx-auto"
+            >Generate Questions!</button>
 
             {/* Conditionally rendering loading text, server response or error message */}
             {isLoading ? (
@@ -96,3 +99,4 @@ function ResumeBox() {
 }
 
 export default ResumeBox;
+
