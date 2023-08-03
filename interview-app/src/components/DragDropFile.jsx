@@ -74,7 +74,7 @@ function DragDropFile() {
     <form id="form-file-upload" style={{ width: '46%', margin: '30px', fontSize: '18px' }} onDragEnter={handleDrag} onSubmit={(e) => e.preventDefault()}>    
       <label id="label-file-upload" htmlFor="input-file-upload" className={dragActive ? "drag-active" : "" }>        
         <div>
-          <h1>Drag and drop your resume here!</h1>
+          <h1>Drag & Drop Your Resume Here!</h1>
           {/* Display the selected file name */}
           
           {file && (
@@ -95,15 +95,21 @@ function DragDropFile() {
       { dragActive && <div id="drag-file-element" onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}></div> }
     </form>
 
-    <textarea style={{ position: 'absolute', transform: 'translate(108%, 30%)', width: '46%', maxWidth: '50%', height: '16rem', minHeight: '16rem', maxHeight: '16rem', margin: '30px' }} // Use textarea for multiline text input
+    <textarea style={{ position: 'absolute', transform: 'translate(108%, 155%)', width: '46%', maxWidth: '50%', height: '3rem', minHeight: '3rem', maxHeight: '3rem', margin: '30px' }} // Use textarea for multiline text input
+      placeholder="Optional Job Position..."
+      className="p-2 bg-transparent border-2 rounded-2xl focus:outline-none px-5 py-2.5"
+      onChange={handleTextChange}
+    />
+
+    <textarea style={{ position: 'absolute', transform: 'translate(108%, 73%)', width: '46%', maxWidth: '50%', height: '12rem', minHeight: '12rem', maxHeight: '12rem', margin: '30px' }} // Use textarea for multiline text input
       placeholder="Optional Job Description..."
-      className="p-2 bg-transparent border-2 rounded-2xl focus:outline-none px-6 py-5"
+      className="p-2 bg-transparent border-2 rounded-2xl focus:outline-none px-5 py-4"
       onChange={handleTextChange}
     />
 
     <button onClick={handleSubmit} style={{ fontWeight: '500' }}
       className="inline-block px-4 py-2 bg-blue-500 text-white rounded-2xl hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300 mx-auto"
-    >Generate Questions!</button>
+    >Generate AI-Powered Questions!</button>
 
     {/* Conditionally rendering loading text or server response */}
     {isLoading ? (

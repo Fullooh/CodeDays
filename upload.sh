@@ -4,6 +4,6 @@ git status
 
 git add .
 
-git commit -m "milestone 2 completed"
+git commit -m "added job position text field"
 
 git push

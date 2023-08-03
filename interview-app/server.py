@@ -17,7 +17,7 @@ app = Flask(__name__,static_folder='build')
 def get_questions(resume,text):
     systempromt = 'You are an interviewer at the HR department at a company.'
     if text!='':
-        userpromt= 'Given the resume of the interviewee: '+resume+ 'and the job description for the role'+text+"please generate 5 interview questions that are specifically tailored to the candidate's resume and 5 interview questions based on the requirements of the job role. Only return questions without any additional information or empty lines."
+        userpromt= 'Given the resume of the interviewee: '+resume+ ' and the job description for the role '+text+" please generate 5 interview questions that are specifically tailored to the candidate's resume and 5 interview questions based on the requirements of the job role. Only return questions without any additional information or empty lines."
         message=[
             {
                 "role": "system",
