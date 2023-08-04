@@ -6,16 +6,20 @@ function DragDropFile() {
 
 
   const [file, setFile] = useState(null);
-  const [text, setText] = useState(''); // Holds the user's optional text input
   const [responseData, setResponseData] = useState(null); // Holds server response
   const [errorMessage, setErrorMessage] = useState(null); // Holds server error
   const [isLoading, setIsLoading] = useState(false); // Tracks loading status
   // drag state
   const [dragActive, setDragActive] = React.useState(false);
-    
+  const [jobPosition, setJobPosition] = useState(''); // Holds the job position
+  const [jobDescription, setJobDescription] = useState(''); // Holds the job description
 
-  const handleTextChange = (e) => {
-    setText(e.target.value);
+  const handleJobPositionChange = (e) => {
+    setJobPosition(e.target.value);
+  }
+
+  const handleJobDescriptionChange = (e) => {
+    setJobDescription(e.target.value);
   }
   
   // handle drag events
@@ -42,7 +46,8 @@ function DragDropFile() {
     setIsLoading(true); // Set loading to true when request starts
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('text', text);
+    formData.append('jobPosition', jobPosition);
+    formData.append('jobDescription', jobDescription);
 
     try {
         const response = await fetch('/upload', {
@@ -98,13 +103,13 @@ function DragDropFile() {
     <textarea style={{ position: 'absolute', transform: 'translate(108%, 155%)', width: '46%', maxWidth: '50%', height: '3rem', minHeight: '3rem', maxHeight: '3rem', margin: '30px' }} // Use textarea for multiline text input
       placeholder="Optional Job Position..."
       className="p-2 bg-transparent border-2 rounded-2xl focus:outline-none px-5 py-2.5"
-      onChange={handleTextChange}
+      onChange={handleJobPositionChange}
     />
 
     <textarea style={{ position: 'absolute', transform: 'translate(108%, 73%)', width: '46%', maxWidth: '50%', height: '12rem', minHeight: '12rem', maxHeight: '12rem', margin: '30px' }} // Use textarea for multiline text input
       placeholder="Optional Job Description..."
       className="p-2 bg-transparent border-2 rounded-2xl focus:outline-none px-5 py-4"
-      onChange={handleTextChange}
+      onChange={handleJobDescriptionChange}
     />
 
     <button onClick={handleSubmit} style={{ fontWeight: '500' }}
