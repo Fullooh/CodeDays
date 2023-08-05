@@ -14,6 +14,7 @@ function DragDropFile() {
   const [jobPosition, setJobPosition] = useState(''); // Holds the job position
   const [jobDescription, setJobDescription] = useState(''); // Holds the job description
 
+
   const handleJobPositionChange = (e) => {
     setJobPosition(e.target.value);
   }
@@ -68,7 +69,35 @@ function DragDropFile() {
     } finally {
         setIsLoading(false); // Set loading to false after request finishes
     }
-}
+  }
+
+  const handleAnswerSubmit = async (question, index) => {
+    const answerTextArea = document.getElementById(`answer-${index}`);
+    const answer = answerTextArea.value;
+
+    try {
+      const response = await fetch('/submit-answer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question,
+          answer,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      } else {
+        // Process the response if needed
+        const data = await response.json();
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
 
   return (
@@ -123,11 +152,22 @@ function DragDropFile() {
        </div>
       ) : responseData ? (
         <div className="mt-5" style={{ margin: '30px' }}>
-          <h3 className="text-xl">Interview Questions:</h3>
+          <h3 className="text-xl" style={{ marginBottom: '30px' }}>Interview Questions:</h3>
           {responseData.split('\n').map((response, index) => (
-          <div key={index} className="border p-4 rounded-lg shadow-md mb-4">
+          <div key={index} className="border p-4 rounded-2xl shadow-md mb-4">
             <p className="text-lg font-bold">Question {index + 1}</p>
             <p>{response}</p>
+              <textarea
+            className="p-2 bg-gray-100 mt-2 rounded-2xl resize-none w-full px-5 py-4"
+            placeholder="Answer the question here..."
+            rows="3">
+              </textarea>
+                <button
+                  className="px-4 py-2 mt-2 bg-blue-500 text-white rounded-2xl hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+                  onClick={() => handleAnswerSubmit(response, index)}
+                >
+                 Submit
+                </button>
           </div>
           ))}
         </div>
