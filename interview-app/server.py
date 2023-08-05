@@ -17,7 +17,7 @@ app = Flask(__name__,static_folder='build')
 def get_questions(resume,position,description):
     systempromt = 'You are an interviewer at the HR department at a company.'
     if description!='':
-        userpromt= 'Given the resume of the interviewee: '+resume+ ' and the job description for the role '+description+" please generate 5 interview questions that are specifically tailored to the candidate's resume and 5 interview questions based on the requirements of the job role. Only return questions without any additional information or empty lines."
+        userpromt= 'Given the resume of the interviewee: ' +resume+ ' and the job description for the role ' +description+ " please generate 5 interview questions that are specifically tailored to the candidate's resume and 5 interview questions based on the requirements of the job role. Only return questions without any additional information or empty lines."
         message=[
             {
                 "role": "system",
@@ -43,7 +43,7 @@ def get_questions(resume,position,description):
 
     elif description=='':
         if position=='':
-            userpromt= 'Here is the resume of the interviewee that you are supposed to interview./n' +resume+ "Please return 10 interview questions that are as relevant as possible based on the resume you received without any additional words."
+            userpromt= 'Given the resume of the interviewee: ' +resume+ " please generate 10 interview questions that are as relevant as possible based on the resume you received without any additional words."
 
             message=[
                 {
@@ -69,7 +69,7 @@ def get_questions(resume,position,description):
             response_content = response.choices[0].message.content
 
         else:
-            userpromt= 'Here is the resume of the interviewee that you are supposed to interview./n' +resume+ " The job position the candidate is being interviewed for is "+position+ " Create 6 relevant interview questions based on the resume you received and 4 behavioral questions about the job position.  Only return questions without any additional information or empty lines."
+            userpromt= 'Given the resume of the interviewee: ' +resume+ ' and the job position the candidate is being interviewed for is ' +position+ " please generate 6 interview questions that are specifically tailored to the candidate's resume and 4 behavioural questions based on the job position. Only return questions without any additional information or empty lines."
 
             message=[
                 {
