@@ -4,7 +4,6 @@ import './drag-drop-file.css';
 // drag drop file component
 function DragDropFile() {
 
-
   const [file, setFile] = useState(null);
   const [responseData, setResponseData] = useState(null); // Holds server response
   const [errorMessage, setErrorMessage] = useState(null); // Holds server error
@@ -13,6 +12,8 @@ function DragDropFile() {
   const [dragActive, setDragActive] = React.useState(false);
   const [jobPosition, setJobPosition] = useState(''); // Holds the job position
   const [jobDescription, setJobDescription] = useState(''); // Holds the job description
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [feedbackLoading, setFeedbackLoading] = useState([]);
 
   const handleJobPositionChange = (e) => {
     setJobPosition(e.target.value);
@@ -70,6 +71,63 @@ function DragDropFile() {
     }
 }
 
+const handleAnswerSubmit = async (question, index) => {
+  // Set loading state for the specific question
+  setFeedbackLoading(prevLoading => {
+    const newLoading = [...prevLoading];
+    newLoading[index] = true;
+    return newLoading;
+  });
+
+  // Clear previous feedback for the specific question
+  setFeedbacks(prevFeedbacks => {
+    const newFeedbacks = [...prevFeedbacks];
+    newFeedbacks[index] = null;
+    return newFeedbacks;
+  });
+
+  const answerTextArea = document.getElementById(`answer-${index}`);
+  const answer = answerTextArea.value;
+
+  try {
+    const response = await fetch('/submit-answer', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        question,
+        answer,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    } else {
+      // Process the response if needed
+      console.log(data);
+      setFeedbacks(prevFeedbacks => {
+        const newFeedbacks = [...prevFeedbacks];
+        newFeedbacks[index] = data.feedback;
+        return newFeedbacks;
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    // Unset loading state for the specific question
+    setFeedbackLoading(prevLoading => {
+      const newLoading = [...prevLoading];
+      newLoading[index] = false;
+      return newLoading;
+    });
+  }
+};
+
+
+
 
   return (
     <div className="flex flex-col mb-10 mx-auto">
@@ -125,9 +183,24 @@ function DragDropFile() {
         <div className="mt-5" style={{ margin: '30px' }}>
           <h3 className="text-xl">Interview Questions:</h3>
           {responseData.split('\n').map((response, index) => (
-          <div key={index} className="border p-4 rounded-lg shadow-md mb-4">
+          <div key={index} className="mb-4">
             <p className="text-lg font-bold">Question {index + 1}</p>
             <p>{response}</p>
+            <textarea
+            id={`answer-${index}`}
+            className="p-2 bg-gray-100 mt-2 rounded-md resize-none w-full"
+            placeholder="Answer the question here..."
+            rows="3"
+            ></textarea>
+                <button
+                  className="px-4 py-2 mt-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+                  onClick={() => handleAnswerSubmit(response, index)}
+                >
+                 Submit
+                </button>
+                {/* Display the loading message */}
+                {feedbackLoading[index] && <p className="text-black-500">Generating AI feedback...</p>}
+                {feedbacks[index] && <p className="text-black-500">{feedbacks[index]}</p>}
           </div>
           ))}
         </div>
