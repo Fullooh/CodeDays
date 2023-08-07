@@ -4,7 +4,6 @@ import './drag-drop-file.css';
 // drag drop file component
 function DragDropFile() {
 
-
   const [file, setFile] = useState(null);
   const [responseData, setResponseData] = useState(null); // Holds server response
   const [errorMessage, setErrorMessage] = useState(null); // Holds server error
@@ -46,6 +45,8 @@ function DragDropFile() {
 
   const handleSubmit = async () => {
     setIsLoading(true); // Set loading to true when request starts
+    setFeedbackLoading([]);
+    setFeedbacks([]);
     const formData = new FormData();
     formData.append('file', file);
     formData.append('jobPosition', jobPosition);
@@ -128,27 +129,29 @@ function DragDropFile() {
   };
 
 
+
+
   return (
     <div className="flex flex-col mb-10 mx-auto">
     
-    <div className="flex justify-center items-center" style={{backgroundColor: "#3C82F6", height: '75px', fontSize: '20px', fontWeight:'700', color: "#FFFFFF" }}>Interview Simulator</div>
+    <div className="flex justify-center items-center font-bold text-xl text-[#FFFFFF] bg-[#3C82F6] h-20">Interview Simulator</div>
 
-    <form id="form-file-upload" style={{ width: '46%', margin: '30px', fontSize: '18px' }} onDragEnter={handleDrag} onSubmit={(e) => e.preventDefault()}>    
+    <form id="form-file-upload" onDragEnter={handleDrag} onSubmit={(e) => e.preventDefault()}>    
       <label id="label-file-upload" htmlFor="input-file-upload" className={dragActive ? "drag-active" : "" }>        
         <div>
-          <h1>Drag & Drop Your Resume Here!</h1>
+          <h1 className="resume box m-7">Drag & Drop Your Resume Here!</h1>
           {/* Display the selected file name */}
           
           {file && (
-            <div style={{ margin: '30px', color: 'green', fontSize: '15px' }}>
-              <p>Selected File: {file.name}</p>
+            <div>
+              <p className="file-text text-sm text-green-600 m-7">Selected File: {file.name}</p>
             </div>
           )}
 
           {errorMessage ? (
-          <div style={{ color: 'red', fontSize: '15px' }}>
-            <p className="error-text">Error:</p>
-            <p>{errorMessage}</p>
+          <div>
+            <p className="error-text text-sm text-red-500">Error:</p>
+            <p className="error-message text-sm text-red-500">{errorMessage}</p>
           </div>
           ) : null}
 
@@ -157,48 +160,51 @@ function DragDropFile() {
       { dragActive && <div id="drag-file-element" onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}></div> }
     </form>
 
-    <textarea style={{ position: 'absolute', transform: 'translate(108%, 155%)', width: '46%', maxWidth: '50%', height: '3rem', minHeight: '3rem', maxHeight: '3rem', margin: '30px' }} // Use textarea for multiline text input
+    <textarea style={{ position: 'absolute', transform: 'translate(108%, 165%)', width: '46%', maxWidth: '50%', height: '3rem', minHeight: '3rem', maxHeight: '3rem', margin: '30px' }} // Use textarea for multiline text input
       placeholder="Optional Job Position..."
-      className="p-2 bg-transparent border-2 rounded-2xl focus:outline-none px-5 py-2.5"
+      className="p-2 bg-transparent border-2 border-[#cbd5e1] rounded-2xl focus:outline-none px-5 py-2.5"
       onChange={handleJobPositionChange}
     />
 
-    <textarea style={{ position: 'absolute', transform: 'translate(108%, 73%)', width: '46%', maxWidth: '50%', height: '12rem', minHeight: '12rem', maxHeight: '12rem', margin: '30px' }} // Use textarea for multiline text input
+    <textarea style={{ position: 'absolute', transform: 'translate(108%, 75%)', width: '46%', maxWidth: '50%', height: '12rem', minHeight: '12rem', maxHeight: '12rem', margin: '30px' }} // Use textarea for multiline text input
       placeholder="Optional Job Description..."
-      className="p-2 bg-transparent border-2 rounded-2xl focus:outline-none px-5 py-4"
+      className="p-2 bg-transparent border-2 border-[#cbd5e1] rounded-2xl focus:outline-none px-5 py-4"
       onChange={handleJobDescriptionChange}
     />
 
-    <button onClick={handleSubmit} style={{ fontWeight: '500' }}
-      className="inline-block px-4 py-2 bg-blue-500 text-white rounded-2xl hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300 mx-auto"
+    <button onClick={handleSubmit}
+      className="inline-block px-4 py-2 bg-blue-500 text-white rounded-2xl hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300 mx-auto font-medium"
     >Generate AI-Powered Questions!</button>
 
     {/* Conditionally rendering loading text or server response */}
     {isLoading ? (
-      <div className="mt-5" style={{ margin: '30px' }}>
+      <div className="mt-5 m-8">
         <p>Loading...</p>
        </div>
       ) : responseData ? (
-        <div className="mt-5" style={{ margin: '30px' }}>
-          <h3 className="text-xl" style={{ marginBottom: '30px' }}>Interview Questions:</h3>
+        <div className="mt-5 m-7">
+          <h3 className="text-xl mb-7">Interview Questions:</h3>
           {responseData.split('\n').map((response, index) => (
-          <div key={index} className="border p-4 rounded-2xl shadow-md mb-4">
+          <div key={index} className="border p-4 rounded-2xl shadow-md mb-4 bg-[#cbd5e1]">
             <p className="text-lg font-bold">Question {index + 1}</p>
             <p>{response}</p>
-              <textarea
-            className="p-2 bg-gray-100 mt-2 rounded-2xl resize-none w-full px-5 py-4"
-            placeholder="Answer the question here..."
-            rows="3">
-              </textarea>
-                <button
-                  className="px-4 py-2 mt-2 bg-blue-500 text-white rounded-2xl hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
-                  onClick={() => handleAnswerSubmit(response, index)}
-                >
-                 Submit
-                </button>
-                {/* Display the loading message */}
-                {feedbackLoading[index] && <p className="text-black-500">Generating AI feedback...</p>}
-                {feedbacks[index] && <p className="text-black-500">{feedbacks[index]}</p>}
+            <textarea
+              id={`answer-${index}`}
+              className="p-2 text-black bg-gray-100 mt-2 rounded-2xl resize-none w-full px-5 py-4"
+              placeholder="Answer the question here..."
+              rows="3">
+            </textarea>
+            <div class="flex justify-end">
+              <button
+                className="px-4 py-2 mt-2 bg-blue-500 text-white rounded-2xl hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+                onClick={() => handleAnswerSubmit(response, index)}
+              >
+                Submit
+              </button>
+            </div>
+            {/* Display the loading message */}
+            {feedbackLoading[index] && <p className="text-blue-600">Generating AI feedback...</p>}
+            {feedbacks[index] && <p className="text-black p-2 bg-gray-100 mt-2 rounded-2xl resize-none w-full px-5 py-4 mt-4">{feedbacks[index]}</p>}
           </div>
           ))}
         </div>
