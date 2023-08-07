@@ -13,7 +13,8 @@ function DragDropFile() {
   const [dragActive, setDragActive] = React.useState(false);
   const [jobPosition, setJobPosition] = useState(''); // Holds the job position
   const [jobDescription, setJobDescription] = useState(''); // Holds the job description
-
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [feedbackLoading, setFeedbackLoading] = useState([]);
 
   const handleJobPositionChange = (e) => {
     setJobPosition(e.target.value);
@@ -72,9 +73,23 @@ function DragDropFile() {
   }
 
   const handleAnswerSubmit = async (question, index) => {
+    // Set loading state for the specific question
+    setFeedbackLoading(prevLoading => {
+      const newLoading = [...prevLoading];
+      newLoading[index] = true;
+      return newLoading;
+    });
+  
+    // Clear previous feedback for the specific question
+    setFeedbacks(prevFeedbacks => {
+      const newFeedbacks = [...prevFeedbacks];
+      newFeedbacks[index] = null;
+      return newFeedbacks;
+    });
+  
     const answerTextArea = document.getElementById(`answer-${index}`);
     const answer = answerTextArea.value;
-
+  
     try {
       const response = await fetch('/submit-answer', {
         method: 'POST',
@@ -86,16 +101,29 @@ function DragDropFile() {
           answer,
         }),
       });
+  
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       } else {
         // Process the response if needed
-        const data = await response.json();
         console.log(data);
+        setFeedbacks(prevFeedbacks => {
+          const newFeedbacks = [...prevFeedbacks];
+          newFeedbacks[index] = data.feedback;
+          return newFeedbacks;
+        });
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      // Unset loading state for the specific question
+      setFeedbackLoading(prevLoading => {
+        const newLoading = [...prevLoading];
+        newLoading[index] = false;
+        return newLoading;
+      });
     }
   };
 
@@ -168,6 +196,9 @@ function DragDropFile() {
                 >
                  Submit
                 </button>
+                {/* Display the loading message */}
+                {feedbackLoading[index] && <p className="text-black-500">Generating AI feedback...</p>}
+                {feedbacks[index] && <p className="text-black-500">{feedbacks[index]}</p>}
           </div>
           ))}
         </div>
