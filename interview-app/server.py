@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, make_response, send_from_directory
+from flask import Flask, request, jsonify, make_response, send_from_directory, session
 from werkzeug.utils import secure_filename
 from PyPDF2 import PdfReader 
 import io, os
@@ -9,15 +9,13 @@ from dotenv import load_dotenv
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-
-
-
 app = Flask(__name__,static_folder='build')
+app.secret_key = os.urandom(24) 
 
-def get_questions(resume,text):
+def get_questions(resume,position,description):
     systempromt = 'You are an interviewer at the HR department at a company.'
-    if text!='':
-        userpromt= 'Given the resume of the interviewee: '+resume+ ' and the job description for the role '+text+" please generate 5 interview questions that are specifically tailored to the candidate's resume and 5 interview questions based on the requirements of the job role. Only return questions without any additional information or empty lines."
+    if description!='':
+        userpromt= 'Given the resume of the interviewee: '+resume+ ' and the job description for the role '+description+" please generate 5 interview questions that are specifically tailored to the candidate's resume and 5 interview questions based on the requirements of the job role. Only return questions without any additional information or empty lines."
         message=[
             {
                 "role": "system",
@@ -41,31 +39,58 @@ def get_questions(resume,text):
         
         response_content = response.choices[0].message.content
 
-    elif text=='':
-        userpromt= 'Here is the resume of the interviewee that you are supposed to interview./n' +resume+ "Please return 10 interview questions that are as relevant as possible based on the resume you received without any additional words."
+    elif description=='':
+        if position=='':
+            userpromt= 'Here is the resume of the interviewee that you are supposed to interview./n' +resume+ "Please return 10 interview questions that are as relevant as possible based on the resume you received without any additional words."
 
-        message=[
-            {
-            "role": "system",
-            "content": systempromt
-            },
-            {
-            "role": "user",
-            "content": userpromt
-            }
-        ]
+            message=[
+                {
+                "role": "system",
+                "content": systempromt
+                },
+                {
+                "role": "user",
+                "content": userpromt
+                }
+            ]
 
-        response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=message,
-        temperature=0.8,
-        max_tokens=1100,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
-        )
+            response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=message,
+            temperature=0.8,
+            max_tokens=1100,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
+            )
 
-        response_content = response.choices[0].message.content
+            response_content = response.choices[0].message.content
+
+        else:
+            userpromt= 'Here is the resume of the interviewee that you are supposed to interview./n' +resume+ " The job position the candidate is being interviewed for is "+position+ " Create 6 relevant interview questions based on the resume you received and 4 behavioral questions about the job position.  Only return questions without any additional information or empty lines."
+
+            message=[
+                {
+                "role": "system",
+                "content": systempromt
+                },
+                {
+                "role": "user",
+                "content": userpromt
+                }
+            ]
+
+            response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=message,
+            temperature=0.6,
+            max_tokens=1100,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
+            )
+
+            response_content = response.choices[0].message.content
 
 
     response_list = response_content.split("\n")
@@ -85,6 +110,30 @@ def get_questions(resume,text):
 
     return newresponse
 
+def get_feedback(resume,position,description,question,answer):
+    response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[
+    {
+      "role": "system",
+      "content": "You are a helpful assistant who provides constructive feedback to interviewees. "
+    },
+    {
+      "role": "user",
+      "content": "Here is the resume of the interviewee: "+resume+" The job position the candidate is being interviewed for is "+position+" The job description of the job the candidate is applying for is: "+description+" The question the candidate is answering is "+ question+ " Here is the candidate's answer: " +answer+ " Provide relevant and constructive feedback and suggestions to the candidate's answer."
+    } 
+    ],
+    temperature=1,
+    max_tokens=1045,
+    top_p=1,
+    frequency_penalty=0,
+    presence_penalty=0
+    )
+
+    response_content = response.choices[0].message.content
+    
+    return response_content
+
 
 
 @app.after_request
@@ -100,7 +149,8 @@ def upload_file():
         return jsonify({'error': 'No file part'}), 400
 
     file = request.files['file']
-    text = request.form.get('text')
+    position = request.form.get('jobPosition')
+    description=request.form.get('jobDescription')
 
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
@@ -119,11 +169,33 @@ def upload_file():
         except PdfReadError:
             return jsonify({'error': 'Unable to read PDF file. Please ensure it is a valid PDF document.'}), 400
 
-        response_content = get_questions(resume, text)
+        response_content = get_questions(resume, position, description)
+
+        session['resume'] = resume
+        session['position'] = position
+        session['description'] = description
 
         return jsonify({'content': response_content}), 200
 
     return jsonify({'error': 'Unexpected error'}), 500
+
+@app.route('/submit-answer', methods=['POST'])
+def submit_answer():
+    # Process the incoming JSON data
+    json_data = request.get_json()
+    question = json_data.get('question')
+    answer = json_data.get('answer')
+    if answer=="":
+        return jsonify({'feedback': 'No answer submitted'}), 200
+    else:
+        # Retrieve data from the session
+        resume = session.get('resume')
+        position = session.get('position')
+        description = session.get('description')
+
+        feedback = get_feedback(resume,position,description,question,answer)
+
+        return jsonify({'feedback': feedback}),200
 
 
 @app.route('/', defaults={'path': ''})
