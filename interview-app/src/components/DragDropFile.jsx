@@ -45,6 +45,8 @@ function DragDropFile() {
 
   const handleSubmit = async () => {
     setIsLoading(true); // Set loading to true when request starts
+    setFeedbackLoading([]);
+    setFeedbacks([]);
     const formData = new FormData();
     formData.append('file', file);
     formData.append('jobPosition', jobPosition);
