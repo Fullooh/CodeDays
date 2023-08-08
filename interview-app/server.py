@@ -13,7 +13,6 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 app = Flask(__name__,static_folder='build')
 app.secret_key = os.urandom(24) 
 
-
 def get_questions(resume,position,description):
     systempromt = 'You are an interviewer at the HR department at a company.'
     if description!='':
@@ -180,6 +179,24 @@ def upload_file():
         return jsonify({'content': response_content}), 200
 
     return jsonify({'error': 'Unexpected error'}), 500
+
+@app.route('/submit-answer', methods=['POST'])
+def submit_answer():
+    # Process the incoming JSON data
+    json_data = request.get_json()
+    question = json_data.get('question')
+    answer = json_data.get('answer')
+    if answer=="":
+        return jsonify({'feedback': 'No answer submitted'}), 200
+    else:
+        # Retrieve data from the session
+        resume = session.get('resume')
+        position = session.get('position')
+        description = session.get('description')
+
+        feedback = get_feedback(resume,position,description,question,answer)
+
+        return jsonify({'feedback': feedback}),200
 
 
 @app.route('/submit-answer', methods=['POST'])

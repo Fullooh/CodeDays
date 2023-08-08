@@ -130,6 +130,63 @@ function DragDropFile() {
 
 
 
+const handleAnswerSubmit = async (question, index) => {
+  // Set loading state for the specific question
+  setFeedbackLoading(prevLoading => {
+    const newLoading = [...prevLoading];
+    newLoading[index] = true;
+    return newLoading;
+  });
+
+  // Clear previous feedback for the specific question
+  setFeedbacks(prevFeedbacks => {
+    const newFeedbacks = [...prevFeedbacks];
+    newFeedbacks[index] = null;
+    return newFeedbacks;
+  });
+
+  const answerTextArea = document.getElementById(`answer-${index}`);
+  const answer = answerTextArea.value;
+
+  try {
+    const response = await fetch('/submit-answer', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        question,
+        answer,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    } else {
+      // Process the response if needed
+      console.log(data);
+      setFeedbacks(prevFeedbacks => {
+        const newFeedbacks = [...prevFeedbacks];
+        newFeedbacks[index] = data.feedback;
+        return newFeedbacks;
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    // Unset loading state for the specific question
+    setFeedbackLoading(prevLoading => {
+      const newLoading = [...prevLoading];
+      newLoading[index] = false;
+      return newLoading;
+    });
+  }
+};
+
+
+
 
   return (
     <div className="flex flex-col mb-10 mx-auto">
