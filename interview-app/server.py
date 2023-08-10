@@ -46,6 +46,7 @@ def get_questions(resume,position,description):
             userpromt= 'Given the resume of the interviewee: ' +resume+ " please generate 10 interview questions that are as relevant as possible based on the resume you received without any additional words."
 
             message=[
+                
                 {
                 "role": "system",
                 "content": systempromt

@@ -4,6 +4,6 @@ git status
 
 git add .
 
-git commit -m "updated front-end"
+git commit -m "removed un-needed resumebox files"
 
 git push
