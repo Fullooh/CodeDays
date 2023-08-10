@@ -178,7 +178,7 @@ function DragDropFile() {
 
     {/* Conditionally rendering loading text or server response */}
     {isLoading ? (
-      <div className="mt-5 m-8">
+      <div className="mt-5 m-8 text-blue-600">
         <p>Loading...</p>
        </div>
       ) : responseData ? (
@@ -212,5 +212,5 @@ function DragDropFile() {
       </div>
   );
 }
-xdxfsdfs
+
 export default DragDropFile;
