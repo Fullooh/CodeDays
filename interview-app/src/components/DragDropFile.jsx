@@ -15,6 +15,16 @@ function DragDropFile() {
   const [feedbacks, setFeedbacks] = useState([]);
   const [feedbackLoading, setFeedbackLoading] = useState([]);
 
+  const [isAnswerVisible, setIsAnswerVisible] = useState([]); // Holds the visibility state of each answer
+  // Function to toggle the visibility of an answer
+  const toggleAnswerVisibility = (index) => {
+    setIsAnswerVisible((prevVisibility) => {
+     const newVisibility = [...prevVisibility];
+      newVisibility[index] = !newVisibility[index];
+      return newVisibility;
+    });
+  };
+  
   const handleJobPositionChange = (e) => {
     setJobPosition(e.target.value);
   }
@@ -180,13 +190,19 @@ function DragDropFile() {
     {isLoading ? (
       <div className="mt-5 m-8 text-blue-600">
         <p>Loading...</p>
-       </div>
+      </div>
       ) : responseData ? (
         <div className="mt-5 m-7">
           <h3 className="text-xl mb-7">Interview Questions:</h3>
           {responseData.split('\n').map((response, index) => (
           <div key={index} className="border p-4 rounded-2xl shadow-md mb-4 bg-[#cbd5e1]">
-            <p className="text-lg font-bold">Question {index + 1}</p>
+          <button
+            className="text-blue-500 hover:underline focus:outline-none"
+            onClick={() => toggleAnswerVisibility(index)}>
+            <p className="text-black text-lg font-bold">Question {index + 1}</p>
+          </button>
+        {isAnswerVisible[index] && (
+          <div>
             <p>{response}</p>
             <textarea
               id={`answer-${index}`}
@@ -205,11 +221,13 @@ function DragDropFile() {
             {/* Display the loading message */}
             {feedbackLoading[index] && <p className="text-blue-600">Generating AI feedback...</p>}
             {feedbacks[index] && <p className="text-black p-2 bg-gray-100 mt-2 rounded-2xl resize-none w-full px-5 py-4 mt-4">{feedbacks[index]}</p>}
-          </div>
-          ))}
+            </div>
+          )}
         </div>
-      ) : null}
+        ))}
       </div>
+    ) : null}
+    </div>
   );
 }
 
