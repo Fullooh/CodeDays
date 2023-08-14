@@ -4,6 +4,6 @@ git status
 
 git add .
 
-git commit -m "added drop-down option for questions"
+git commit -m "added show/hide button for feedback"
 
 git push

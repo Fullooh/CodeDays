@@ -14,12 +14,22 @@ function DragDropFile() {
   const [jobDescription, setJobDescription] = useState(''); // Holds the job description
   const [feedbacks, setFeedbacks] = useState([]);
   const [feedbackLoading, setFeedbackLoading] = useState([]);
-
   const [isAnswerVisible, setIsAnswerVisible] = useState([]); // Holds the visibility state of each answer
+  const [isFeedbackVisible, setIsFeedbackVisible] = useState([]); // Holds the visibility state of AI feedback for each question
+
   // Function to toggle the visibility of an answer
   const toggleAnswerVisibility = (index) => {
     setIsAnswerVisible((prevVisibility) => {
      const newVisibility = [...prevVisibility];
+      newVisibility[index] = !newVisibility[index];
+      return newVisibility;
+    });
+  };
+
+  // Function to toggle the visibility of AI feedback for a specific question
+  const toggleFeedbackVisibility = (index) => {
+    setIsFeedbackVisible((prevVisibility) => {
+      const newVisibility = [...prevVisibility];
       newVisibility[index] = !newVisibility[index];
       return newVisibility;
     });
@@ -197,7 +207,7 @@ function DragDropFile() {
           {responseData.split('\n').map((response, index) => (
           <div key={index} className="border p-4 rounded-2xl shadow-md mb-4 bg-[#cbd5e1]">
           <button
-            className="text-blue-500 hover:underline focus:outline-none"
+            className="text-gray-100 hover:underline focus:outline-none"
             onClick={() => toggleAnswerVisibility(index)}>
             <p className="text-black text-lg font-bold">Question {index + 1}</p>
           </button>
@@ -212,17 +222,29 @@ function DragDropFile() {
             </textarea>
             <div class="flex justify-end">
               <button
-                className="px-4 py-2 mt-2 bg-blue-500 text-white rounded-2xl hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+                className="px-4 py-2 mt-2 mr-3.5 bg-blue-500 text-white rounded-2xl hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
                 onClick={() => handleAnswerSubmit(response, index)}
               >
                 Submit
               </button>
+              <button
+              className="px-4 py-2 mt-2 bg-blue-500 text-white rounded-2xl hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+              onClick={() => toggleFeedbackVisibility(index)}
+              >
+              {isFeedbackVisible[index] ? 'Hide Feedback' : 'Show Feedback'}
+              </button>
             </div>
             {/* Display the loading message */}
             {feedbackLoading[index] && <p className="text-blue-600">Generating AI feedback...</p>}
-            {feedbacks[index] && <p className="text-black p-2 bg-gray-100 mt-2 rounded-2xl resize-none w-full px-5 py-4 mt-4">{feedbacks[index]}</p>}
+            {isFeedbackVisible[index] && feedbacks[index] && (
+            <div>
+              <p className="text-black p-2 bg-gray-100 rounded-2xl resize-none w-full px-5 py-4 mt-4">
+                {feedbacks[index]}
+              </p>
             </div>
           )}
+        </div>
+        )}
         </div>
         ))}
       </div>
