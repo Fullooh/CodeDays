@@ -4,6 +4,6 @@ git status
 
 git add .
 
-git commit -m "added show/hide button for feedback"
+git commit -m "updated feedback button to appear after generated"
 
 git push

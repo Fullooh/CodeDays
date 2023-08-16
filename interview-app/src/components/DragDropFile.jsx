@@ -16,6 +16,8 @@ function DragDropFile() {
   const [feedbackLoading, setFeedbackLoading] = useState([]);
   const [isAnswerVisible, setIsAnswerVisible] = useState([]); // Holds the visibility state of each answer
   const [isFeedbackVisible, setIsFeedbackVisible] = useState([]); // Holds the visibility state of AI feedback for each question
+  const [feedbackError, setFeedbackError] = useState([]);
+
 
   // Function to toggle the visibility of an answer
   const toggleAnswerVisibility = (index) => {
@@ -67,6 +69,7 @@ function DragDropFile() {
     setIsLoading(true); // Set loading to true when request starts
     setFeedbackLoading([]);
     setFeedbacks([]);
+    setFeedbackError([]);
     const formData = new FormData();
     formData.append('file', file);
     formData.append('jobPosition', jobPosition);
@@ -107,7 +110,12 @@ function DragDropFile() {
       newFeedbacks[index] = null;
       return newFeedbacks;
     });
-  
+    setFeedbackError(prevFeedbackError => {
+      const newFeedbackError = [...prevFeedbackError];
+      newFeedbackError[index] = null;
+      return newFeedbackError;
+    });
+    
     const answerTextArea = document.getElementById(`answer-${index}`);
     const answer = answerTextArea.value;
   
@@ -138,6 +146,18 @@ function DragDropFile() {
       }
     } catch (error) {
       console.log(error);
+      // Set the error message for the specific question
+      setFeedbackError(prevError => {
+        const newError = [...prevError];
+        newError[index] = error.message.includes('400') ? 'No Answer Submitted' : 'An error occurred';
+        return newError;
+      });
+      // Unset loading state for the specific question
+      setFeedbackLoading(prevLoading => {
+        const newLoading = [...prevLoading];
+        newLoading[index] = false;
+        return newLoading;
+      });
     } finally {
       // Unset loading state for the specific question
       setFeedbackLoading(prevLoading => {
@@ -147,6 +167,8 @@ function DragDropFile() {
       });
     }
   };
+
+
 
 
 
@@ -222,29 +244,39 @@ function DragDropFile() {
             </textarea>
             <div class="flex justify-end">
               <button
-                className="px-4 py-2 mt-2 mr-3.5 bg-blue-500 text-white rounded-2xl hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+                className="px-4 py-2 mt-2 bg-gray-900 text-white rounded-2xl hover:bg-black focus:outline-none focus:ring focus:ring-gray-100"
                 onClick={() => handleAnswerSubmit(response, index)}
               >
                 Submit
               </button>
-              <button
-              className="px-4 py-2 mt-2 bg-blue-500 text-white rounded-2xl hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
-              onClick={() => toggleFeedbackVisibility(index)}
-              >
-              {isFeedbackVisible[index] ? 'Hide Feedback' : 'Show Feedback'}
-              </button>
             </div>
-            {/* Display the loading message */}
-            {feedbackLoading[index] && <p className="text-blue-600">Generating AI feedback...</p>}
+            {/* Display the loading message or error */}
+            {feedbackLoading[index] ? (
+              <p className="text-blue-600">Generating AI Feedback...</p>
+            ) : feedbackError[index] ? (
+              <p className="text-red-600">{feedbackError[index]}</p>
+            ) : (
+            // Display "Show Feedback" button when feedback is available
+            <div class="flex justify-end">
+              {feedbacks[index] && (
+                <button
+                  className="px-4 py-2 mt-2 bg-blue-500 text-white rounded-2xl hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+                  onClick={() => toggleFeedbackVisibility(index)}
+                >
+                  {isFeedbackVisible[index] ? 'Hide AI Feedback' : 'Show AI Feedback'}
+                </button>
+              )}
+            </div>
+            )}
             {isFeedbackVisible[index] && feedbacks[index] && (
             <div>
               <p className="text-black p-2 bg-gray-100 rounded-2xl resize-none w-full px-5 py-4 mt-4">
                 {feedbacks[index]}
               </p>
             </div>
+            )}
+          </div>
           )}
-        </div>
-        )}
         </div>
         ))}
       </div>
