@@ -10,23 +10,30 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Push
     steps:
-      - name: git-checkout
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install all dependencies
+      - name: Debug: List Files in Working Directory
+        run: |
+          ls -la
+          pwd
+
+      - name: Install Dependencies
         run: npm install
-        working-directory: /home/runner/work/CodeDays/interview-app/ # Correct absolute path
+        working-directory: ./CodeDays/interview-app/
 
+      - name: Debug: List Files in Build Directory
+        run: ls -la ./CodeDays/interview-app/
+      
       - name: Build
-        run: npm run build # The build command of your project
-        working-directory: /home/runner/work/CodeDays/interview-app/ # Correct absolute path
+        run: npm run build # Modify with your actual build command
+        working-directory: ./CodeDays/interview-app/
 
-
-      - name: Push
+      - name: Push Build
         uses: s0/git-publish-subdir-action@develop
         env:
           REPO: self
           BRANCH: build # The branch name where you want to push the assets
-          FOLDER: dist # The directory where your assets are generated
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub will automatically add this - you don't need to bother getting a token
-          MESSAGE: "Build: ({sha}) {msg}" # The commit message
+          FOLDER: dist # Modify to match the output directory of your build
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MESSAGE: "Build: ({sha}) {msg}"
