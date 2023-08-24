@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        with:
-          path: ./CodeDays/interview-app/ # Change this to the desired path
 
       - name: Debug:List Files in Working Directory
         run: |
@@ -22,14 +20,14 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
-        working-directory: ./CodeDays/interview-app/
+        working-directory: ./CodeDays/interview-app/ # Correct relative path
 
       - name: Debug:List Files in Build Directory
         run: ls -la ./CodeDays/interview-app/
       
       - name: Build
         run: npm run build # Modify with your actual build command
-        working-directory: ./CodeDays/interview-app/
+        working-directory: ./CodeDays/interview-app/ # Correct relative path
 
       - name: Push Build
         uses: s0/git-publish-subdir-action@develop
