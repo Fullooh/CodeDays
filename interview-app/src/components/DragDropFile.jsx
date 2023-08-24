@@ -14,8 +14,11 @@ function DragDropFile() {
   const [jobDescription, setJobDescription] = useState(''); // Holds the job description
   const [feedbacks, setFeedbacks] = useState([]);
   const [feedbackLoading, setFeedbackLoading] = useState([]);
-
   const [isAnswerVisible, setIsAnswerVisible] = useState([]); // Holds the visibility state of each answer
+  const [isFeedbackVisible, setIsFeedbackVisible] = useState([]); // Holds the visibility state of AI feedback for each question
+  const [feedbackError, setFeedbackError] = useState([]);
+
+
   // Function to toggle the visibility of an answer
   const toggleAnswerVisibility = (index) => {
     setIsAnswerVisible((prevVisibility) => {
@@ -25,6 +28,15 @@ function DragDropFile() {
     });
   };
 
+  // Function to toggle the visibility of AI feedback for a specific question
+  const toggleFeedbackVisibility = (index) => {
+    setIsFeedbackVisible((prevVisibility) => {
+      const newVisibility = [...prevVisibility];
+      newVisibility[index] = !newVisibility[index];
+      return newVisibility;
+    });
+  };
+  
   const handleJobPositionChange = (e) => {
     setJobPosition(e.target.value);
   }
@@ -57,6 +69,7 @@ function DragDropFile() {
     setIsLoading(true); // Set loading to true when request starts
     setFeedbackLoading([]);
     setFeedbacks([]);
+    setFeedbackError([]);
     const formData = new FormData();
     formData.append('file', file);
     formData.append('jobPosition', jobPosition);
@@ -97,7 +110,12 @@ function DragDropFile() {
       newFeedbacks[index] = null;
       return newFeedbacks;
     });
-  
+    setFeedbackError(prevFeedbackError => {
+      const newFeedbackError = [...prevFeedbackError];
+      newFeedbackError[index] = null;
+      return newFeedbackError;
+    });
+    
     const answerTextArea = document.getElementById(`answer-${index}`);
     const answer = answerTextArea.value;
   
@@ -128,6 +146,18 @@ function DragDropFile() {
       }
     } catch (error) {
       console.log(error);
+      // Set the error message for the specific question
+      setFeedbackError(prevError => {
+        const newError = [...prevError];
+        newError[index] = error.message.includes('400') ? 'No Answer Submitted' : 'An error occurred';
+        return newError;
+      });
+      // Unset loading state for the specific question
+      setFeedbackLoading(prevLoading => {
+        const newLoading = [...prevLoading];
+        newLoading[index] = false;
+        return newLoading;
+      });
     } finally {
       // Unset loading state for the specific question
       setFeedbackLoading(prevLoading => {
@@ -139,12 +169,10 @@ function DragDropFile() {
   };
 
 
-
-
   return (
     <div className="flex flex-col mb-10 mx-auto">
     
-    <div className="flex justify-center items-center font-bold text-xl text-[#FFFFFF] bg-[#3C82F6] h-20">Interview Simulator</div>
+    <div className="flex justify-center items-center font-bold text-xl text-[#FFFFFF] bg-[#3C82F6] h-20">Resume Talk</div>
 
     <form id="form-file-upload" onDragEnter={handleDrag} onSubmit={(e) => e.preventDefault()}>    
       <label id="label-file-upload" htmlFor="input-file-upload" className={dragActive ? "drag-active" : "" }>        
@@ -191,38 +219,59 @@ function DragDropFile() {
       <div className="mt-5 m-8 text-blue-600">
         <p>Loading...</p>
       </div>
-    ) : responseData ? (
-      <div className="mt-5 m-7">
-        <h3 className="text-xl mb-7">Interview Questions:</h3>
-        {responseData.split('\n').map((response, index) => (
-        <div key={index} className="border p-4 rounded-2xl shadow-md mb-4 bg-[#cbd5e1]">
+      ) : responseData ? (
+        <div className="mt-5 m-7">
+          <h3 className="text-xl mb-7">Interview Questions:</h3>
+          {responseData.split('\n').map((response, index) => (
+          <div key={index} className="border p-4 rounded-2xl shadow-md mb-4 bg-[#cbd5e1]">
           <button
-            className="text-blue-500 hover:underline focus:outline-none"
-            onClick={() => toggleAnswerVisibility(index)}
-          >
-            Question {index + 1}
+            className="text-gray-100 hover:underline focus:outline-none"
+            onClick={() => toggleAnswerVisibility(index)}>
+            <p className="text-black text-lg font-bold">Question {index + 1}</p>
           </button>
-          {isAnswerVisible[index] && (
-            <div>
-              <p>{response}</p>
-              <textarea
-                id={`answer-${index}`}
-                className="p-2 text-black bg-gray-100 mt-2 rounded-2xl resize-none w-full px-5 py-4"
-                placeholder="Answer the question here..."
-                rows="3">
-              </textarea>
-              <div className="flex justify-end">
+        {isAnswerVisible[index] && (
+          <div>
+            <p>{response}</p>
+            <textarea
+              id={`answer-${index}`}
+              className="p-2 text-black bg-gray-100 mt-2 rounded-2xl resize-none w-full px-5 py-4"
+              placeholder="Answer the question here..."
+              rows="3">
+            </textarea>
+            <div class="flex justify-end">
+              <button
+                className="px-4 py-2 mt-2 bg-gray-900 text-white rounded-2xl hover:bg-black focus:outline-none focus:ring focus:ring-gray-100"
+                onClick={() => handleAnswerSubmit(response, index)}
+              >
+                Submit
+              </button>
+            </div>
+            {/* Display the loading message or error */}
+            {feedbackLoading[index] ? (
+              <p className="text-blue-600">Generating AI Feedback...</p>
+            ) : feedbackError[index] ? (
+              <p className="text-red-600">{feedbackError[index]}</p>
+            ) : (
+            // Display "Show Feedback" button when feedback is available
+            <div class="flex justify-end">
+              {feedbacks[index] && (
                 <button
                   className="px-4 py-2 mt-2 bg-blue-500 text-white rounded-2xl hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
-                  onClick={() => handleAnswerSubmit(response, index)}
+                  onClick={() => toggleFeedbackVisibility(index)}
                 >
-                  Submit
+                  {isFeedbackVisible[index] ? 'Hide AI Feedback' : 'Show AI Feedback'}
                 </button>
-              </div>
-              {/* Display the loading message */}
-              {feedbackLoading[index] && <p className="text-blue-600">Generating AI feedback...</p>}
-              {feedbacks[index] && <p className="text-black p-2 bg-gray-100 mt-2 rounded-2xl resize-none w-full px-5 py-4 mt-4">{feedbacks[index]}</p>}
+              )}
             </div>
+            )}
+            {isFeedbackVisible[index] && feedbacks[index] && (
+            <div>
+              <p className="text-black p-2 bg-gray-100 rounded-2xl resize-none w-full px-5 py-4 mt-4">
+                {feedbacks[index]}
+              </p>
+            </div>
+            )}
+          </div>
           )}
         </div>
         ))}
