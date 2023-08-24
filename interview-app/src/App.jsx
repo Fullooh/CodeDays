@@ -1,5 +1,5 @@
-import './styles/tailwind.css'
 import DragDropFile from './components/DragDropFile.jsx';
+import './styles/tailwind.css'
 
 function App() {
     return (
