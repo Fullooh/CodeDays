@@ -15,9 +15,11 @@ jobs:
 
       - name: Install all dependencies
         run: npm install
+        working-directory: ./CodeDays/interview-app/ # Change this to the correct path
 
       - name: Build
         run: npm run build # The build command of your project
+        working-directory: ./CodeDays/interview-app/ # Change this to the correct path
 
       - name: Push
         uses: s0/git-publish-subdir-action@develop
