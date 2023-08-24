@@ -4,6 +4,6 @@ git status
 
 git add .
 
-git commit -m "updated feedback button to appear after generated"
+git commit -m "final changes"
 
 git push

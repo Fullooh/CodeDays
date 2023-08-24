@@ -169,14 +169,10 @@ function DragDropFile() {
   };
 
 
-
-
-
-
   return (
     <div className="flex flex-col mb-10 mx-auto">
     
-    <div className="flex justify-center items-center font-bold text-xl text-[#FFFFFF] bg-[#3C82F6] h-20">Interview Simulator</div>
+    <div className="flex justify-center items-center font-bold text-xl text-[#FFFFFF] bg-[#3C82F6] h-20">Resume Talk</div>
 
     <form id="form-file-upload" onDragEnter={handleDrag} onSubmit={(e) => e.preventDefault()}>    
       <label id="label-file-upload" htmlFor="input-file-upload" className={dragActive ? "drag-active" : "" }>        
