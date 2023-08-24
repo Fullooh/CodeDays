@@ -15,19 +15,19 @@ jobs:
 
       - name: Debug:List Files in Working Directory
         run: |
-          ls -la
+          ls -la $GITHUB_WORKSPACE
           pwd
 
       - name: Install Dependencies
         run: npm install
-        working-directory: ./CodeDays/interview-app/ # Correct relative path
+        working-directory: $GITHUB_WORKSPACE/CodeDays/interview-app/ # Correct relative path
 
       - name: Debug:List Files in Build Directory
-        run: ls -la ./CodeDays/interview-app/
+        run: ls -la $GITHUB_WORKSPACE/CodeDays/interview-app/
       
       - name: Build
         run: npm run build # Modify with your actual build command
-        working-directory: ./CodeDays/interview-app/ # Correct relative path
+        working-directory: $GITHUB_WORKSPACE/CodeDays/interview-app/ # Correct relative path
 
       - name: Push Build
         uses: s0/git-publish-subdir-action@develop
