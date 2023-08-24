@@ -3,37 +3,27 @@ name: Generate a build and push to another branch
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
     name: Build and Push
     steps:
-      - name: Checkout code
+      - name: git-checkout
         uses: actions/checkout@v2
 
-      - name: Debug:List Files in Working Directory
-        run: |
-          ls -la $GITHUB_WORKSPACE
-          pwd
-
-      - name: Install Dependencies
+      - name: Install all dependencies
         run: npm install
-        working-directory: $GITHUB_WORKSPACE/CodeDays/interview-app/ # Correct relative path
 
-      - name: Debug:List Files in Build Directory
-        run: ls -la $GITHUB_WORKSPACE/CodeDays/interview-app/
-      
       - name: Build
-        run: npm run build # Modify with your actual build command
-        working-directory: $GITHUB_WORKSPACE/CodeDays/interview-app/ # Correct relative path
+        run: npm run build # The build command of your project
 
-      - name: Push Build
+      - name: Push
         uses: s0/git-publish-subdir-action@develop
         env:
           REPO: self
           BRANCH: build # The branch name where you want to push the assets
-          FOLDER: dist # Modify to match the output directory of your build
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MESSAGE: "Build: ({sha}) {msg}"
+          FOLDER: dist # The directory where your assets are generated
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub will automatically add this - you don't need to bother getting a token
+          MESSAGE: "Build: ({sha}) {msg}" # The commit message
