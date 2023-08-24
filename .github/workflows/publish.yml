@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          path: ./CodeDays/interview-app/ # Change this to the desired path
 
       - name: Debug:List Files in Working Directory
         run: |
