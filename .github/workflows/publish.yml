@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Debug: List Files in Working Directory
+      - name: Debug:List Files in Working Directory
         run: |
           ls -la
           pwd
@@ -22,7 +22,7 @@ jobs:
         run: npm install
         working-directory: ./CodeDays/interview-app/
 
-      - name: Debug: List Files in Build Directory
+      - name: Debug:List Files in Build Directory
         run: ls -la ./CodeDays/interview-app/
       
       - name: Build
