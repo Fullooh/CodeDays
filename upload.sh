@@ -4,6 +4,6 @@ git status
 
 git add .
 
-git commit -m "Update to repo"
+git commit -m "final changes"
 
 git push
