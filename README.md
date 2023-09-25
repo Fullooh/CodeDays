@@ -12,6 +12,7 @@ Welcome to Resume Talk, an AI-powered interview simulator that helps you prepare
 ## Introduction
 
 Resume Talk is a powerful tool designed to assist job seekers in practicing and improving their interview skills. It leverages the GPT-4 API to generate interview questions tailored to your resume and the job description you provide.
+You can view our project showcase [here](https://showcase.codeday.org/project/clldi8zr413312887xmyrvtust28).
 
 ## Usage
 
