@@ -35,6 +35,10 @@ Resume Talk is a powerful tool designed to assist job seekers in practicing and 
 - Provides AI-driven feedback and grading on your interview responses.
 - User-friendly drag-and-drop interface for easy resume upload.
 
+## Showcase
+
+You can view our project showcase [here](https://showcase.codeday.org/project/clldi8zr413312887xmyrvtust28).
+
 ## Acknowledgments
 
 We would like to express our gratitude to the OpenAI team for their GPT-4 API, which powers the AI interview simulation in this project.
