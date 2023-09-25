@@ -20,9 +20,12 @@ Resume Talk is a powerful tool designed to assist job seekers in practicing and 
 3. Resume Talk will generate 10 interview questions for you: 5 based on your resume and 5 based on the job position you're targeting.
 4. Answer the questions and receive AI-powered feedback and grading on your responses.
 
-![S![Screenshot 2023-09-24 at 9 49 41 PM](https://github.com/Fullooh/CodeDays/assets/58962478/d2add7b4-5708-4dcb-b0d1-6d591bbbd126)
+![Screenshot 2023-09-24 at 9 49 06 PM](https://github.com/Fullooh/CodeDays/assets/58962478/36418a7e-ae09-4490-affc-e63cd591512f)
+
 ![Screenshot 2023-09-24 at 9 49 41 PM](https://github.com/Fullooh/CodeDays/assets/58962478/4de83acc-8ef1-41a9-9e8c-b72180ad1532)
+
 ![Screenshot 2023-09-24 at 9 49 58 PM](https://github.com/Fullooh/CodeDays/assets/58962478/27e10518-aff4-469d-9a71-32e74c771979)
+
 ![Screenshot 2023-09-24 at 9 51 28 PM](https://github.com/Fullooh/CodeDays/assets/58962478/3a4882fc-a979-4bbc-ae69-6f144ee91c75)
 
 
